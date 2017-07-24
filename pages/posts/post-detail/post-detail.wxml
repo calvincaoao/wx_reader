@@ -10,8 +10,8 @@
   <text class="title">{{detail.title}}</text>
   <view class="tool">
      <view class="circle-img">
-        <image src="{{detail.collection}}"></image>
-        <image class="share-img" src="{{detail.share}}"></image>
+        <image catchtap="onCollectTap" src="{{detail.collectionimg}}"></image>
+        <image class="share-img" src="{{detail.shareimg}}"></image>
      </view>
      <view class="horizon"></view>
   </view>
