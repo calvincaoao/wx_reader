@@ -14,15 +14,19 @@ Page({
    */
 
   onCollectTap : function(event){
-      var collected = false
+      var collected = ""
       wx.getStorage({
         key: 'collected',
         success: function(res) {
           console.log(res.data)
           collected = res.data
         
-          if (collected) {
+          if (collected == "true") {
             console.log("already collected")
+            wx.setStorage({
+              key: 'collected',
+              data: 'false',
+            })
           } else {
             wx.showModal({
               title: '提示',
