@@ -14,41 +14,62 @@ Page({
    */
 
   onCollectTap : function(event){
-      var collected = ""
-      wx.getStorage({
-        key: 'collected',
-        success: function(res) {
-          console.log(res.data)
-          collected = res.data
-        
-          if (collected == "true") {
-            console.log("already collected")
-            wx.setStorage({
-              key: 'collected',
-              data: 'false',
-            })
-          } else {
-            wx.showModal({
-              title: '提示',
-              content: '这是一个模态弹窗',
-              success: function (res) {
-                if (res.confirm) {
-                  console.log('用户点击确定')
-                } else if (res.cancel) {
-                  console.log('用户点击取消')
-                }
-              }
-            })
-            wx.setStorage({
-              key: 'collected',
-              data: 'true',
-            })
-          }
-        },
+    var that = this
+    var postscollected = wx.getStorageSync("posts_collected")
+    var postcollected = postscollected[this.data.currentPostId]
+    if(!postcollected){
+      postscollected[this.data.currentPostId] = !postcollected
+      
+      wx.showModal({
+        title: "收藏",
+        content: postcollected ? "收藏该文章？" : "取消收藏该文章？",
+        showCancel: "true",
+        cancelText: "取消",
+        cancelColor: "#333",
+        confirmText: "确认",
+        confirmColor: "#405f80",
+        success: function(res){
+            if(res.confirm){
+              that.setData({
+                collected: !postcollected
+              })
+              wx.setStorageSync("posts_collected", postscollected)
+            }
+        }
       })
-
-     
-
+    }
+      // var collected = ""
+      // wx.getStorage({
+      //   key: 'collected',
+      //   success: function(res) {
+      //     console.log(res.data)
+      //     collected = res.data
+        
+      //     if (collected == "true") {
+      //       console.log("already collected")
+      //       wx.setStorage({
+      //         key: 'collected',
+      //         data: 'false',
+      //       })
+      //     } else {
+      //       wx.showModal({
+      //         title: '提示',
+      //         content: '这是一个模态弹窗',
+      //         success: function (res) {
+      //           if (res.confirm) {
+      //             console.log('用户点击确定')
+      //           } else if (res.cancel) {
+      //             console.log('用户点击取消')
+      //           }
+      //         }
+      //       })
+      //       wx.setStorage({
+      //         key: 'collected',
+      //         data: 'true',
+      //       })
+      //     }
+      //   },
+      // })
       
   },
 
@@ -57,20 +78,27 @@ Page({
    */
   onLoad: function (options) {
      var postId = options.id
+     this.data.currentPostId = postId
      var postData = postsdata.postList[postId]
      this.setData(postData)
-     
-     var collected = wx.getStorage({
-       key: 'collected',
-       success: function(res) {},
-     })
 
-     if(collected == undefined){
-          wx.setStorage({
-          key: 'collected',
-          data: 'false',
-        })
-     }
+    //  var posts_collected = {
+    //    "1": true,
+    //    "2": false,
+    //    "3": true
+    //  }
+     
+    var postscollected = wx.getStorageSync("posts_collected")
+    if(postscollected){
+      var collected = postscollected[postId]
+      this.setData({
+        collected: collected
+      })
+    }else{
+      var postscollected = {}
+      postscollected[postId] = false
+      wx.setStorageSync("posts_collected", postscollected)
+    }
  
      
      //console.log(postData)
